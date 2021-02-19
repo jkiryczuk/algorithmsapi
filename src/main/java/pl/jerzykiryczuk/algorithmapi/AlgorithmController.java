@@ -7,18 +7,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.jerzykiryczuk.algorithmapi.entities.ControlNumberResponse;
-import pl.jerzykiryczuk.algorithmapi.entities.LuhnRequest;
-import pl.jerzykiryczuk.algorithmapi.entities.ValidityResponse;
+import pl.jerzykiryczuk.algorithmapi.entities.*;
 
 @RestController
 @RequestMapping("/algorithms")
-public class AlghoritmController {
+public class AlgorithmController {
 
     private AlgorithmService algorithmService;
 
     @Autowired
-    public AlghoritmController(final AlgorithmService algorithmService) {
+    public AlgorithmController(final AlgorithmService algorithmService) {
         this.algorithmService = algorithmService;
     }
 
@@ -41,4 +39,12 @@ public class AlghoritmController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/knn")
+    public ResponseEntity<NeighbourResponse> nearestNeighbour(@RequestBody NearestNeighbourRequest request) {
+        NeighbourResponse response = algorithmService.nearestNeighbour(request.getPointList());
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+
 }
