@@ -6,14 +6,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class AlgorithmService {
 
-    LuhnAlghoritmComponent component;
+    LuhnAlgorithmComponent component;
 
     @Autowired
-    public AlgorithmService(LuhnAlghoritmComponent component) {
+    public AlgorithmService(LuhnAlgorithmComponent component) {
         this.component = component;
     }
 
-    public String getMockup(){
-      return component.test();
+    public String generateCheckDigit(String number) {
+        return component.calculateCheckDigit(number);
+    }
+
+    public Boolean checkNumberValidity(String number){
+        return component.checkValidity(number);
     }
 }
