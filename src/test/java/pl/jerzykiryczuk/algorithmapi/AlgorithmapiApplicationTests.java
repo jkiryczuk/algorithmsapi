@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.springframework.test.web.servlet.MockMvc;
 import pl.jerzykiryczuk.algorithmapi.entities.LuhnRequest;
+import pl.jerzykiryczuk.algorithmapi.exceptions.Messages;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -46,7 +47,7 @@ class AlgorithmapiApplicationTests {
     @Test
     public void shouldCheckValidityTrue() throws Exception {
         given().
-        standaloneSetup(algorithmController).
+                standaloneSetup(algorithmController).
                 body("{\"number\": \"292723200000000021\"}").
                 contentType("application/json").
                 when().
@@ -72,6 +73,50 @@ class AlgorithmapiApplicationTests {
     }
 
     @Test
+    public void shouldReturn400AfterWrongCheckValidityLetters() throws Exception {
+        given().
+                standaloneSetup(algorithmController).
+                body("{\"number\": \"29272320010a000021\"}").
+                contentType("application/json").
+                when().
+                get("/algorithms/checkValidity").
+                then().
+                statusCode(400).
+                body("message", equalTo(Messages.WRONG_PATTERN_MESSAGE));
+
+    }
+
+    @Test
+    public void shouldReturn400AfterWrongCheckValidityWhiteSpace() throws Exception {
+        given().
+                standaloneSetup(algorithmController).
+                body("{\"number\": \"29272320010 000021\"}").
+                contentType("application/json").
+                when().
+                get("/algorithms/checkValidity").
+                then().
+                statusCode(400).
+                body("message", equalTo(Messages.WRONG_PATTERN_MESSAGE));
+
+    }
+
+
+    @Test
+    public void shouldReturn400AfterWrongCheckValiditySpecialSign() throws Exception {
+        given().
+                standaloneSetup(algorithmController).
+                body("{\"number\": \"29272320010;000021\"}").
+                contentType("application/json").
+                when().
+                get("/algorithms/checkValidity").
+                then().
+                statusCode(400).
+                body("message", equalTo(Messages.WRONG_PATTERN_MESSAGE));
+
+    }
+
+
+    @Test
     public void shouldReturnNumber() throws Exception {
         given().
                 standaloneSetup(algorithmController).
@@ -82,6 +127,48 @@ class AlgorithmapiApplicationTests {
                 then().
                 statusCode(200).
                 body("number", equalTo("924803"));
+    }
+
+    @Test
+    public void shouldReturn400AfterWrongRequestGetControlNumberSpecialSign() throws Exception {
+        given().
+                standaloneSetup(algorithmController).
+                body("{\"number\": \"29272320010;000021\"}").
+                contentType("application/json").
+                when().
+                get("/algorithms/getControlNumber").
+                then().
+                statusCode(400).
+                body("message", equalTo(Messages.WRONG_PATTERN_MESSAGE));
+
+    }
+
+    @Test
+    public void shouldReturn400AfterWrongRequestGetControlNumberWhiteSpace() throws Exception {
+        given().
+                standaloneSetup(algorithmController).
+                body("{\"number\": \"29272320010 000021\"}").
+                contentType("application/json").
+                when().
+                get("/algorithms/getControlNumber").
+                then().
+                statusCode(400).
+                body("message", equalTo(Messages.WRONG_PATTERN_MESSAGE));
+
+    }
+
+    @Test
+    public void shouldReturn400AfterWrongRequestGetControlLetters() throws Exception {
+        given().
+                standaloneSetup(algorithmController).
+                body("{\"number\": \"29272320010a000021\"}").
+                contentType("application/json").
+                when().
+                get("/algorithms/getControlNumber").
+                then().
+                statusCode(400).
+                body("message", equalTo(Messages.WRONG_PATTERN_MESSAGE));
+
     }
 
 }

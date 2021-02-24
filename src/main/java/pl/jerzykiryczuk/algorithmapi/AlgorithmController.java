@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.jerzykiryczuk.algorithmapi.entities.*;
+import pl.jerzykiryczuk.algorithmapi.exceptions.WrongRequestException;
 
 @RestController
 @RequestMapping("/algorithms")
 public class AlgorithmController {
 
-    public static final String WRONG_REQUEST_MESSAGE = "Wrong request - only numbers are accepted";
     private AlgorithmService algorithmService;
 
     @Autowired
@@ -31,8 +31,8 @@ public class AlgorithmController {
         try {
             ControlNumberResponse response = new ControlNumberResponse(algorithmService.generateCheckDigit(request.getNumber()));
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (NumberFormatException e) {
-            return new ResponseEntity<>(new BadRequestResponse(WRONG_REQUEST_MESSAGE),HttpStatus.BAD_REQUEST);
+        } catch (WrongRequestException e) {
+            return new ResponseEntity<>(new BadRequestResponse(e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -41,8 +41,8 @@ public class AlgorithmController {
         try {
             ValidityResponse response = new ValidityResponse(algorithmService.checkNumberValidity(request.getNumber()));
             return new ResponseEntity<ValidityResponse>(response, HttpStatus.OK);
-        } catch (NumberFormatException e) {
-            return new ResponseEntity<>(new BadRequestResponse(WRONG_REQUEST_MESSAGE),HttpStatus.BAD_REQUEST);
+        } catch (WrongRequestException e) {
+            return new ResponseEntity<>(new BadRequestResponse(e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
 

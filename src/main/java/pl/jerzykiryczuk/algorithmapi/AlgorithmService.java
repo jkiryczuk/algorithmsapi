@@ -5,26 +5,40 @@ import org.springframework.stereotype.Service;
 import pl.jerzykiryczuk.algorithmapi.entities.Edge;
 import pl.jerzykiryczuk.algorithmapi.entities.NeighbourResponse;
 import pl.jerzykiryczuk.algorithmapi.entities.Point;
+import pl.jerzykiryczuk.algorithmapi.exceptions.WrongRequestException;
 
 import java.util.List;
+import java.util.regex.Pattern;
+
+import static pl.jerzykiryczuk.algorithmapi.exceptions.Messages.WRONG_PATTERN_MESSAGE;
 
 @Service
 public class AlgorithmService {
 
+    public static final String REGEX = "[0-9]+";
     private LuhnAlgorithmComponent luhnAlgorithmComponent;
     private NearestNeighbourAlgorithmComponent nearestNeighbourAlgorithmComponent;
+    private Pattern pattern;
+
 
     @Autowired
     public AlgorithmService(final LuhnAlgorithmComponent luhnAlgorithmComponent, final NearestNeighbourAlgorithmComponent nearestNeighbourAlgorithmComponent) {
         this.luhnAlgorithmComponent = luhnAlgorithmComponent;
         this.nearestNeighbourAlgorithmComponent = nearestNeighbourAlgorithmComponent;
+        pattern = Pattern.compile(REGEX);
     }
 
-    public String generateCheckDigit(String number) {
+    private boolean validateInput(String number){
+        return pattern.matcher(number).matches();
+    }
+
+    public String generateCheckDigit(String number) throws WrongRequestException {
+        if (!validateInput(number)) throw new WrongRequestException(WRONG_PATTERN_MESSAGE);
         return luhnAlgorithmComponent.calculateCheckDigit(number);
     }
 
-    public Boolean checkNumberValidity(String number) {
+    public Boolean checkNumberValidity(String number) throws WrongRequestException {
+        if (!validateInput(number)) throw new WrongRequestException(WRONG_PATTERN_MESSAGE);
         return luhnAlgorithmComponent.checkValidity(number);
     }
 
