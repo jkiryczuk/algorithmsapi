@@ -22,7 +22,7 @@ class LuhnAlgorithmComponent {
         var sum = 0
         for (i in number.length - 1 downTo 0) {
             var tempInt = Integer.parseInt(number.get(i).toString())
-            if (i % 2 == 1) {
+            if (i % 2 == 0) {
                 tempInt *= 2
                 tempInt = checkValueAfterMultiplication(tempInt)
             }
