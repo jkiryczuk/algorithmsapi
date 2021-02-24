@@ -13,6 +13,7 @@ import pl.jerzykiryczuk.algorithmapi.entities.*;
 @RequestMapping("/algorithms")
 public class AlgorithmController {
 
+    public static final String WRONG_REQUEST_MESSAGE = "Wrong request - only numbers are accepted";
     private AlgorithmService algorithmService;
 
     @Autowired
@@ -20,23 +21,28 @@ public class AlgorithmController {
         this.algorithmService = algorithmService;
     }
 
+    @GetMapping("/")
+    public String TestController(){
+        return "Hello World";
+    }
+
     @GetMapping("/getControlNumber")
-    public ResponseEntity<ControlNumberResponse> getControlNumber(@RequestBody LuhnRequest request) {
+    public ResponseEntity<?> getControlNumber(@RequestBody LuhnRequest request) {
         try {
             ControlNumberResponse response = new ControlNumberResponse(algorithmService.generateCheckDigit(request.getNumber()));
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (NumberFormatException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new BadRequestResponse(WRONG_REQUEST_MESSAGE),HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/checkValidity")
-    public ResponseEntity<ValidityResponse> checkValidity(@RequestBody LuhnRequest request) {
+    public ResponseEntity<?> checkValidity(@RequestBody LuhnRequest request) {
         try {
             ValidityResponse response = new ValidityResponse(algorithmService.checkNumberValidity(request.getNumber()));
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<ValidityResponse>(response, HttpStatus.OK);
         } catch (NumberFormatException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new BadRequestResponse(WRONG_REQUEST_MESSAGE),HttpStatus.BAD_REQUEST);
         }
     }
 
